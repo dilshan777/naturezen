@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'naturezen_core',
+    'session_history',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +58,7 @@ ROOT_URLCONF = 'naturezen.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS':[os.path.join(BASE_DIR,'templates/'),os.path.join(BASE_DIR,'naturezen_core','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,8 +79,12 @@ WSGI_APPLICATION = 'naturezen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'naturezen',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+              'host': 'mongodb+srv://dilshan:4NZlo7PJCEFiVapw@cluster0.dgine.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+        }
     }
 }
 
@@ -115,8 +121,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ADMINLTE2_THEME = 'skin-blue'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
+STATIC_URL = '/staticfiles/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/var/www/html/naturezen/media'
 
-STATIC_URL = '/static/'
+
+STATIC_ROOT = '/var/www/html/naturezen/staticfiles'

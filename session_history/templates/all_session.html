@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/datatables.min.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6 cus-heading">
+                <div class="d-flex align-items-center">
+                    <h1 class="text-5xl font-extrabold dark:text-white">
+                        <small class="font-semibold text-gray-500 dark:text-gray-400">
+                            SESSION HISTORY
+                        </small>
+                    </h1>
+                </div>
+            </div>
+            <div class="breadcrumb-div">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb float-sm-right">
+                        {% for breadcrumb in breadcrumbs %}
+                        {% if not forloop.last %}
+                        <li class="breadcrumb-item">
+                            <a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
+                        </li>
+                        {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row justify-left">
+            <div class="col-lg-12">
+                <div class="card mt-6">
+                    <div class="card-body">
+                        <section class="w-full">
+                            <div id="section2">
+                                <table id="allSessions" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>First Pulse Rate</th>
+                                        <th>Last Pulse Rate</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in session_history %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.first_bpm }}</td>
+                                        <td>{{ item.last_bpm }}</td>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/datatables.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
+<script>
+    $('#allSessions').DataTable();
+</script>
+{% endblock %}

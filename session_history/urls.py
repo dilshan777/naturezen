@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 
+from session_history.views import index
+
 urlpatterns = [
-    path('sessions/', include('session_history.urls')),
-    path('bpm/', include('naturezen_core.urls')),
+
+    # feature urls
+    path('index', index, name='session_history'),
     path('', admin.site.urls),
+
 ]

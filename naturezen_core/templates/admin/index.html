@@ -1,0 +1,133 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% load admin_menu %}
+
+{% block extrastyle %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .mapdiv {
+        width: 100%;
+        height: auto;
+    }
+
+    .mapdiv canvas {
+        width: 100%;
+        height: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mapdiv">
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const CHANNEL_ID = "2725750";
+    const API_KEY = "NJPN0KMWHMY67FBI";
+    const labels = Array.from({length: 10}, (_, i) => i + 1);
+    let data = Array(10).fill(0);
+
+    const ctx = document.getElementById('heartRateChart').getContext('2d');
+    const heartRateChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Heart Rate (BPM)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                data: data,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'BPM'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                }
+            }
+        }
+    });
+
+    async function fetchBPMData() {
+        try {
+            const response = await fetch(`https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${API_KEY}&results=1`);
+            const result = await response.json();
+            const bpmValue = result.feeds[0]?.field1;
+            if (bpmValue) {
+                updateChart(bpmValue);
+                sendBPMToBackend(bpmValue);
+            }
+        } catch (error) {
+            console.error("Error fetching data from ThingSpeak:", error);
+        }
+    }
+
+    function updateChart(bpmValue) {
+        data.shift();
+        data.push(Number(bpmValue));
+        heartRateChart.update();
+    }
+
+    function sendBPMToBackend(bpmValue) {
+        fetch('http://127.0.0.1:8000/bpm/update-bpm', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCSRFToken() // Function to retrieve CSRF token dynamically
+            },
+            body: `${encodeURIComponent(bpmValue)}`
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    console.error("Failed to save BPM data:", err);
+                });
+            }
+            console.log("BPM data saved successfully");
+        })
+        .catch(error => {
+            console.error("Error sending BPM data to backend:", error);
+        });
+    }
+
+    // Function to retrieve CSRF token from the cookie
+    function getCSRFToken() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.split('=').map(c => c.trim());
+            if (name === 'csrftoken') {
+                return value;
+            }
+        }
+        return '';
+    }
+
+    // Fetch BPM data every 15 seconds
+    setInterval(fetchBPMData, 15000);
+</script>
+
+{% endblock %}
