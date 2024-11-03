@@ -7,19 +7,20 @@
 
 4. python -m venv venv
 
-5. venv\Scripts\activate
+5. .\venv\Scripts\activate
 
    source venv\Scripts\activate
 
-6. pip install -r requirements.txt
 
-7. python manage.py makemigrations
+7. pip install -r requirements.txt
 
-8. python manage.py migrate 
+8. python manage.py makemigrations
+
+9. python manage.py migrate 
    
-9. python manage.py createsuperuser
+10. python manage.py createsuperuser
 
-10. python manage.py runserver
+11. python manage.py runserver
 
     python manage.py runserver 8001
    
