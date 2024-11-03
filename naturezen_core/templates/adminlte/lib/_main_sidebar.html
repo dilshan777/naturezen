@@ -32,6 +32,14 @@
                 </li>
 
 
+                <li class="nav-item has-treeview {% if '/users/index' in request.path or '/users/create' in request.path or '/users/edit' in request.path %}active menu-open menu-open-cus{% endif %}">
+                    <a href="{% url 'about_page' %}" class="nav-link">
+                        <i class="nav-icon fas fa-people-group"></i>
+                        <p>About</p>
+                    </a>
+                </li>
+
+
                 {% endblock nav_links_outer %}
             </ul>
         </nav>

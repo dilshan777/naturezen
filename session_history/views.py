@@ -22,3 +22,11 @@ def index(request):
     return render(request, 'all_session.html', context)
 
 
+def about(request):
+    breadcrumb = []
+    context = {
+        'available_apps': admin.site.get_app_list(request),
+        'breadcrumbs': breadcrumb,
+    }
+
+    return render(request, 'about.html', context)
