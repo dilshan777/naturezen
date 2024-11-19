@@ -213,3 +213,7 @@ i.fa.fa-download:hover {
        max-width: 50%;
     }
 }
+
+.main-sidebar {
+    background-color: #276838 !important;
+}
